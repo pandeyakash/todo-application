@@ -27,6 +27,7 @@ function displayArchives() {
     t.textContent = ele.title;
     p.textContent = ele.pLevel;
     s.textContent = ele.status;
+    p.classList.add(ele.pLevel);
 
     r.append(rb);
     d.append(db);

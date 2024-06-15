@@ -2,10 +2,22 @@ const form = document.querySelector("form");
 const title = document.querySelector("#title");
 const pLevel = document.querySelector("#p-level");
 const tBody = document.querySelector("table tbody");
+const filterPriority = document.querySelector("#priority");
+const filterStatus = document.querySelector("#status");
 
 let todos = JSON.parse(localStorage.getItem("todos")) || [];
 let archives = JSON.parse(localStorage.getItem("archives")) || [];
-displayTodo();
+displayTodo(todos);
+filterPriority.addEventListener("change", (ele) => {
+  let filterToDos = filterToDo(todos, filterPriority.value, "pLevel");
+  displayTodo(filterToDos);
+});
+
+filterStatus.addEventListener("change", (ele) => {
+  let filterToDos = filterToDo(todos, filterStatus.value, "status");
+  displayTodo(filterToDos);
+});
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   todoSubmit();
@@ -19,11 +31,12 @@ function todoSubmit() {
   };
   todos.push(todo);
   localStorage.setItem("todos", JSON.stringify(todos));
-  displayTodo();
+  displayTodo(todos);
 }
 
-function displayTodo() {
+function displayTodo(todos) {
   tBody.innerHTML = "";
+
   todos.forEach((ele, i) => {
     const row = document.createElement("tr");
 
@@ -37,6 +50,7 @@ function displayTodo() {
     t.textContent = ele.title;
     p.textContent = ele.pLevel;
     s.textContent = ele.status;
+    p.classList.add(ele.pLevel);
 
     db.textContent = "Archive";
     d.append(db);
@@ -62,7 +76,18 @@ function displayTodo() {
       archives = [...archives, ...archive];
       localStorage.setItem("todos", JSON.stringify(todos));
       localStorage.setItem("archives", JSON.stringify(archives));
-      displayTodo();
+      displayTodo(todos);
     });
   });
+}
+
+function filterToDo(todos, filterBy, value) {
+  let filterToDos = [];
+  if (filterBy !== "All") {
+    filterToDos = todos.filter((ele) => {
+      return ele[value] === filterBy;
+    });
+    return filterToDos;
+  }
+  return todos;
 }
